@@ -6,7 +6,7 @@ typedef struct lizard_t
     char ch;
     char arr[5];
     direction direction ;
-    /* data */
+
 }lizard_t;
 
 typedef struct cockroaches_t

@@ -35,7 +35,7 @@ int main(){
     //mensagme de conexão
     lizard.msg_type = 1;
     zmq_send(socket, &lizard, sizeof(lizard_t), 0);
-    zmq_recv(socket, answer, 50, 0);
+    zmq_recv(socket, answer, sizeof(answer), 0);
     
 	initscr();			/* Start curses mode 		*/
 	cbreak();				/* Line buffering disabled	*/
@@ -43,8 +43,10 @@ int main(){
 	noecho();			/* Don't echo() while we do getch */
    
 
-    //criar direção do ncurses aqui!
-    //int ch;
+    //definindo tipo de mensagem para movimento
+    lizard.msg_type = 1;
+    
+    int ch;
     int n = 0;
     do
     {
@@ -77,15 +79,15 @@ int main(){
 
         //TODO_9
         // prepare the movement message
+        if (ch != 'x'){
+            zmq_send(socket, &lizard, sizeof(lizard_t), 0);
+            zmq_recv(socket, answer, sizeof(answer), 0);
+        }
         
-        
-
-        //TODO_10
-        //send the movement message
-        
-
-
     }while(ch != 81);
 
-    
+     endwin();
+    zmq_close(socket);
+    zmq_ctx_destroy(context);
+
 }
