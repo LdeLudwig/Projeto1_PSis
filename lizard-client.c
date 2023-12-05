@@ -4,6 +4,10 @@
 #include "structs.h"
 
 int main(){
+
+    //defining answer
+    char answer[50];
+
     //criando lizard
     lizard_t lizard;
 
@@ -29,10 +33,7 @@ int main(){
     //mensagme de conexão
     lizard.msg_type = 0;
     zmq_send(socket, &lizard, sizeof(lizard_t), 0);
-
-
-    
-
+    zmq_recv(socket, answer, 50, 0);
     
 	initscr();			/* Start curses mode 		*/
 	cbreak();				/* Line buffering disabled	*/
