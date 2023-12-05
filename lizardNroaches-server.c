@@ -70,7 +70,8 @@ int main()
     void *responder = zmq_socket (context, ZMQ_REP);
     int rc = zmq_bind (responder, "tcp://*:5555");
     
-    cockroaches_t m;
+    cockroaches_t cockroach1;
+    lizard_t lizard1;
     
 	initscr();		    	
 	cbreak();				
@@ -90,10 +91,10 @@ int main()
     direction  direction;
     while (1)
     {
-        zmq_recv (responder, &m, sizeof(cockroaches_t), 0);
-        
-        if(m.msg_type == 0){
-            ch = m.ch;
+        zmq_recv (responder, &cockroach1, sizeof(cockroaches_t), 0);
+        zmq_recv (responder, &lizard1, sizeof(lizard_t), 0);
+        if(cockroach1.msg_type == 0 || lizard1.msg_type == 0){
+            ch = cockroach1.ch;
             pos_x = WINDOW_SIZE/2;
             pos_y = WINDOW_SIZE/2;
 
@@ -103,9 +104,9 @@ int main()
             char_data[n_chars].pos_y = pos_y;
             n_chars++;
         }
-        if(m.msg_type == 1){
+        if(cockroach1.msg_type == 1 || lizard1.msg_type == 1){
             //STEP 4
-            int ch_pos = find_ch_info(char_data, n_chars, m.ch);
+            int ch_pos = find_ch_info(char_data, n_chars, cockroach1.ch);
             if(ch_pos != -1){
                 pos_x = char_data[ch_pos].pos_x;
                 pos_y = char_data[ch_pos].pos_y;
@@ -115,7 +116,7 @@ int main()
                 waddch(my_win,' ');
 
                 /* claculates new direction */
-                direction = m.direction;
+                direction = cockroach1.direction;
 
                 /* claculates new mark position */
                 new_position(&pos_x, &pos_y, direction);
@@ -124,6 +125,7 @@ int main()
 
             }        
         }
+
         /* draw mark on new position */
         wmove(my_win, pos_x, pos_y);
         waddch(my_win,ch| A_BOLD);
