@@ -7,7 +7,7 @@
 #include <fcntl.h>  
 #include <stdlib.h>
 
-#define WINDOW_SIZE 15 
+#define WINDOW_SIZE 30
 
 // STEP 1
 typedef struct ch_info_t
@@ -64,14 +64,19 @@ int main()
     ch_info_t char_data[100];
     int n_chars = 0;
 
+    cockroaches_t array_roaches[10];
+    lizard_t array_lizards[26];
+
     //Ex 1 - Lab 5:
     //  Socket to talk to clients
     void *context = zmq_ctx_new ();
     void *responder = zmq_socket (context, ZMQ_REP);
     int rc = zmq_bind (responder, "tcp://*:5555");
     
-    cockroaches_t cockroach1;
-    lizard_t lizard1;
+    cockroaches_t cockroach1 = array_roaches[0];
+    lizard_t lizard1 = array_lizards[0];
+    cockroaches_t cockroach2 = array_roaches[1];
+    lizard_t lizard2 = array_lizards[1];
     
 	initscr();		    	
 	cbreak();				
@@ -91,9 +96,87 @@ int main()
     direction  direction;
     while (1)
     {
-        zmq_recv (responder, &cockroach1, sizeof(cockroaches_t), 0);
-        zmq_recv (responder, &lizard1, sizeof(lizard_t), 0);
-        if(cockroach1.msg_type == 0 || lizard1.msg_type == 0){
+        for(int i=0; i < sizeof(array_lizards);i++){
+            zmq_recv (responder, &array_lizards[i], sizeof(lizard_t), 0);
+            if(array_lizards[i].msg_type == 0){
+                ch = array_lizards[i].ch;
+                pos_x = WINDOW_SIZE/2;
+                pos_y = WINDOW_SIZE/2;
+
+                //STEP 3
+                char_data[n_chars].ch = ch;
+                char_data[n_chars].pos_x = pos_x;
+                char_data[n_chars].pos_y = pos_y;
+                n_chars++;
+            }
+            if(array_lizards[i].msg_type == 1){
+                //STEP 4
+                int ch_pos = find_ch_info(char_data, n_chars, array_lizards[i].ch);
+                if(ch_pos != -1){
+                    pos_x = char_data[ch_pos].pos_x;
+                    pos_y = char_data[ch_pos].pos_y;
+                    ch = char_data[ch_pos].ch;
+                    /*deletes old place */
+                    wmove(my_win, pos_x, pos_y);
+                    waddch(my_win,' ');
+
+                    /* claculates new direction */
+                    direction = array_lizards[i].direction;
+
+                    /* claculates new mark position */
+                    new_position(&pos_x, &pos_y, direction);
+                    char_data[ch_pos].pos_x = pos_x;
+                    char_data[ch_pos].pos_y = pos_y;
+                }        
+            }
+            /* draw mark on new position */
+            wmove(my_win, pos_x, pos_y);
+            waddch(my_win,ch| A_BOLD);
+            wrefresh(my_win);	
+            zmq_send(responder, "OK", 3, 0); 
+        }
+
+        for(int i=0; i < sizeof(array_roaches);i++){
+            zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
+            if(array_roaches[i].msg_type == 0){
+                ch = array_roaches[i].ch;
+                pos_x = WINDOW_SIZE/2;
+                pos_y = WINDOW_SIZE/2;
+
+                //STEP 3
+                char_data[n_chars].ch = ch;
+                char_data[n_chars].pos_x = pos_x;
+                char_data[n_chars].pos_y = pos_y;
+                n_chars++;
+            }
+            if(array_roaches[i].msg_type == 1){
+                //STEP 4
+                int ch_pos = find_ch_info(char_data, n_chars, array_roaches[i].ch);
+                if(ch_pos != -1){
+                    pos_x = char_data[ch_pos].pos_x;
+                    pos_y = char_data[ch_pos].pos_y;
+                    ch = char_data[ch_pos].ch;
+                    /*deletes old place */
+                    wmove(my_win, pos_x, pos_y);
+                    waddch(my_win,' ');
+
+                    /* claculates new direction */
+                    direction = cockroach1.direction;
+
+                    /* claculates new mark position */
+                    new_position(&pos_x, &pos_y, direction);
+                    char_data[ch_pos].pos_x = pos_x;
+                    char_data[ch_pos].pos_y = pos_y;
+                }      
+                wmove(my_win, pos_x, pos_y);
+                waddch(my_win,ch| A_BOLD);
+                wrefresh(my_win);	
+                zmq_send(responder, "OK", 3, 0);  
+            }
+        }
+        //zmq_recv (responder, &cockroach1, sizeof(cockroaches_t), 0);
+        //zmq_recv (responder, &lizard1, sizeof(lizard_t), 0);
+        /*if(cockroach1.msg_type == 0 || lizard1.msg_type == 0){
             ch = cockroach1.ch;
             pos_x = WINDOW_SIZE/2;
             pos_y = WINDOW_SIZE/2;
@@ -110,27 +193,27 @@ int main()
             if(ch_pos != -1){
                 pos_x = char_data[ch_pos].pos_x;
                 pos_y = char_data[ch_pos].pos_y;
-                ch = char_data[ch_pos].ch;
+                ch = char_data[ch_pos].ch;*/
                 /*deletes old place */
-                wmove(my_win, pos_x, pos_y);
-                waddch(my_win,' ');
+                /*wmove(my_win, pos_x, pos_y);
+                waddch(my_win,' ');*/
 
                 /* claculates new direction */
-                direction = cockroach1.direction;
+                //direction = cockroach1.direction;
 
                 /* claculates new mark position */
-                new_position(&pos_x, &pos_y, direction);
+                /*new_position(&pos_x, &pos_y, direction);
                 char_data[ch_pos].pos_x = pos_x;
                 char_data[ch_pos].pos_y = pos_y;
 
             }        
-        }
+        }*/
 
         /* draw mark on new position */
-        wmove(my_win, pos_x, pos_y);
+        /*wmove(my_win, pos_x, pos_y);
         waddch(my_win,ch| A_BOLD);
         wrefresh(my_win);	
-        zmq_send(responder, "OK", 3, 0); 
+        zmq_send(responder, "OK", 3, 0); */
     }
   	endwin();			/* End curses mode		  */
 

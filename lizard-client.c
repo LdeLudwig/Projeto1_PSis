@@ -29,8 +29,8 @@ int main()
     lizard_t m;
     m.msg_type = 0;
     m.ch = ch;
-    //zmq_send (requester, &m, sizeof(m), 0);
-    //zmq_recv(requester, answer, 50, 0);
+    zmq_send (requester, &m, sizeof(m), 0);
+    zmq_recv(requester, answer, 50, 0);
 
 
 	initscr();			/* Start curses mode 		*/
