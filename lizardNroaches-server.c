@@ -1,3 +1,4 @@
+#include <zmq.h>
 #include <ncurses.h>
 #include "structs.h"
 #include <unistd.h>
@@ -5,8 +6,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>  
 #include <stdlib.h>
-#include <assert.h>
-#include <zmq.h>
 
 #define WINDOW_SIZE 15 
 
@@ -59,20 +58,21 @@ int find_ch_info(ch_info_t char_data[], int n_char, int ch){
     return -1;
 }
 
-
 int main()
-{
+{	 
     //STEP 2
     ch_info_t char_data[100];
     int n_chars = 0;
 
-    lizard_t m;
-	void *context = zmq_ctx_new();
-    void *socket = zmq_socket(context, ZMQ_REP);
-    int rc = zmq_bind(socket, "ipc://tmp/s1");
-    assert(rc == 0);
-
-
+    //Ex 1 - Lab 5:
+    //  Socket to talk to clients
+    void *context = zmq_ctx_new ();
+    void *responder = zmq_socket (context, ZMQ_REP);
+    int rc = zmq_bind (responder, "tcp://*:5555");
+    
+    cockroaches_t cockroach1;
+    lizard_t lizard1;
+    
 	initscr();		    	
 	cbreak();				
     keypad(stdscr, TRUE);   
@@ -91,30 +91,22 @@ int main()
     direction  direction;
     while (1)
     {
-        zmq_recv(socket, &m, sizeof(lizard_t), 0);
-        int ch_pos = find_ch_info(char_data, n_chars, m.ch);
-        if(m.msg_type == 0){
-            if(ch_pos < 0)
-            {
-                ch = m.ch;
-                pos_x = WINDOW_SIZE/2;
-                pos_y = WINDOW_SIZE/2;
+        zmq_recv (responder, &cockroach1, sizeof(cockroaches_t), 0);
+        zmq_recv (responder, &lizard1, sizeof(lizard_t), 0);
+        if(cockroach1.msg_type == 0 || lizard1.msg_type == 0){
+            ch = cockroach1.ch;
+            pos_x = WINDOW_SIZE/2;
+            pos_y = WINDOW_SIZE/2;
 
-                //STEP 3
-                char_data[n_chars].ch = ch;
-                char_data[n_chars].pos_x = pos_x;
-                char_data[n_chars].pos_y = pos_y;
-                n_chars++;
-            }    
+            //STEP 3
+            char_data[n_chars].ch = ch;
+            char_data[n_chars].pos_x = pos_x;
+            char_data[n_chars].pos_y = pos_y;
+            n_chars++;
         }
-        if(m.msg_type == 1){
+        if(cockroach1.msg_type == 1 || lizard1.msg_type == 1){
             //STEP 4
-            for(int i = 0; i < n_chars; i++){
-                wmove(my_win, char_data[i].pos_x, char_data[i].pos_y);
-                waddch(my_win,char_data[i].ch| A_BOLD);
-                wrefresh(my_win);	
-                zmq_send(socket, "OK", 2, 0);
-            }
+            int ch_pos = find_ch_info(char_data, n_chars, cockroach1.ch);
             if(ch_pos != -1){
                 pos_x = char_data[ch_pos].pos_x;
                 pos_y = char_data[ch_pos].pos_y;
@@ -124,7 +116,7 @@ int main()
                 waddch(my_win,' ');
 
                 /* claculates new direction */
-                direction = m.direction;
+                direction = cockroach1.direction;
 
                 /* claculates new mark position */
                 new_position(&pos_x, &pos_y, direction);
@@ -133,13 +125,17 @@ int main()
 
             }        
         }
+
         /* draw mark on new position */
         wmove(my_win, pos_x, pos_y);
         waddch(my_win,ch| A_BOLD);
         wrefresh(my_win);	
-        zmq_send(socket, "OK", 3, 0);
+        zmq_send(responder, "OK", 3, 0); 
     }
   	endwin();			/* End curses mode		  */
+
+    zmq_close(responder);
+    zmq_ctx_destroy(context);
 
 	return 0;
 }
