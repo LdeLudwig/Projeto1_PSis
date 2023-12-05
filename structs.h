@@ -9,10 +9,10 @@ typedef struct lizard_t
     /* data */
 }lizard_t;
 
-typedef struct cockroaches
+typedef struct cockroaches_t
 {   
     int msg_type; /* 0 join   1 - move */
     char ch; 
-    cockroaches direction ;
+    direction direction ;
     /* data */
-}cockroaches;
+}cockroaches_t;
