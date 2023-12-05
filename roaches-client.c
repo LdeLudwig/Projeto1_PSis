@@ -29,16 +29,16 @@ int main()
 
     // TODO_6
     // send connection message
-     m;
+    cockroaches_t m;
     m.msg_type = 0;
     m.ch = ch;
-    zmq_send(requester, &m, sizeof(remote_char_t), 0);
-    //zmq_recv(requester, answer, 10, 0);
+    zmq_send(requester, &m, sizeof(cockroaches_t), 0);
+    zmq_recv(requester, answer, 10, 0);
     
     
 
     int sleep_delay;
-    direction_t direction;
+    direction direction;
     int n = 0;
     int key;
     while (1)
@@ -71,7 +71,7 @@ int main()
         //TODO_10
         //send the movement message
         if(key != 'x'){
-            zmq_send(requester, &m, sizeof(remote_char_t), 0);
+            zmq_send(requester, &m, sizeof(cockroaches_t), 0);
             zmq_recv(requester, answer, 10, 0);        }
     } while (key != 'x');
 
