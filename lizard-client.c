@@ -5,18 +5,20 @@
 
 int main(){
     //criando lizard
-    lizard lizard;
+    lizard_t lizard;
 
+    //ZeroQM context
+    void *context = zmq_ctx_new();
+    void *socket = zmq_socket(context, ZMQ_REQ);
+    zmq_connect (socket, "ipc://tmp/s1");
+
+    //usuário definindo o char.
     do{
         printf("Digite o caractere (a..z): ");
         lizard.ch = getchar();
         lizard.ch = tolower(lizard.ch);  
     } while(!isalpha(lizard.ch));
 
-    //ZeroQM context
-    void *context = zmq_ctx_new();
-    void *requester = zmq_socket(context, ZMQ_REQ);
-    zmq_connect (requester, "ipc://tmp/s1");
 
     //adicionando letra e pontos dentro do array lizard
     lizard.arr[0] = lizard.ch;
@@ -26,6 +28,9 @@ int main(){
 
     //mensagme de conexão
     lizard.msg_type = 0;
+    zmq_send(socket, &lizard, sizeof(lizard_t), 0);
+
+
     
 
     
