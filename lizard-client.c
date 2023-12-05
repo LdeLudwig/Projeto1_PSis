@@ -2,6 +2,7 @@
 #include <zmq.h>
 #include <ncurses.h>
 #include "structs.h"
+#include <ctype.h> 
 
 int main(){
 
@@ -14,8 +15,9 @@ int main(){
     //ZeroQM context
     void *context = zmq_ctx_new();
     void *socket = zmq_socket(context, ZMQ_REQ);
-    zmq_connect (socket, "ipc://tmp/s1");
+    zmq_connect (socket, "tcp://localhost:5555");
 
+    char ch;
     //usuário definindo o char.
     do{
         printf("Digite o caractere (a..z): ");
@@ -31,7 +33,7 @@ int main(){
     }
 
     //mensagme de conexão
-    lizard.msg_type = 0;
+    lizard.msg_type = 1;
     zmq_send(socket, &lizard, sizeof(lizard_t), 0);
     zmq_recv(socket, answer, 50, 0);
     
@@ -42,7 +44,7 @@ int main(){
    
 
     //criar direção do ncurses aqui!
-    int ch;
+    //int ch;
     int n = 0;
     do
     {

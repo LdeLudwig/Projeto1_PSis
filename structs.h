@@ -8,3 +8,11 @@ typedef struct lizard_t
     direction direction ;
     /* data */
 }lizard_t;
+
+typedef struct cockroaches
+{   
+    int msg_type; /* 0 join   1 - move */
+    char ch; 
+    cockroaches direction ;
+    /* data */
+}cockroaches;

@@ -69,7 +69,7 @@ int main()
     lizard_t m;
 	void *context = zmq_ctx_new();
     void *socket = zmq_socket(context, ZMQ_REP);
-    int rc = zmq_bind(socket, "tcp://*:5555");
+    int rc = zmq_bind(socket, "ipc://tmp/s1");
     assert(rc == 0);
 
 
@@ -137,7 +137,7 @@ int main()
         wmove(my_win, pos_x, pos_y);
         waddch(my_win,ch| A_BOLD);
         wrefresh(my_win);	
-        zmq_send(socket, "OK", 2, 0);
+        zmq_send(socket, "OK", 3, 0);
     }
   	endwin();			/* End curses mode		  */
 
