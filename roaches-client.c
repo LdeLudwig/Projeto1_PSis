@@ -33,7 +33,7 @@ int main()
     m.msg_type = 0;
     m.ch = ch;
     zmq_send(requester, &m, sizeof(cockroaches_t), 0);
-    zmq_recv(requester, answer, 10, 0);
+    //zmq_recv(requester, answer, 10, 0);
     
     
 
