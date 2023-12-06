@@ -7,16 +7,16 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <ncurses.h>
 #include <zmq.h>
-
 
 int main()
 {	 
-
     char answer[10];
-    void *context = zmq_ctx_new ();
-    void *requester = zmq_socket (context, ZMQ_REQ);
-    zmq_connect (requester, "tcp://localhost:5555");
+    // Initialize the ZeroMQ context and socket
+    void *context = zmq_ctx_new();
+    void *socket = zmq_socket(context, ZMQ_REQ);
+    zmq_connect(socket, "tcp://localhost:5555");
 
     //TODO_5
     // read the character from the user
@@ -32,19 +32,17 @@ int main()
     cockroaches_t m;
     m.msg_type = 0;
     m.ch = ch;
-    zmq_send(requester, &m, sizeof(cockroaches_t), 0);
-    //zmq_recv(requester, answer, 10, 0);
-    
-    
+    zmq_send(socket, &m, sizeof(cockroaches_t), 0);
+    zmq_recv(socket, answer, 10, 0);
 
     int sleep_delay;
     direction direction;
     int n = 0;
     int key;
-    while (1)
+    do
     {
-        n++;
         sleep_delay = random()%700000;
+        n++;
         usleep(sleep_delay);
         direction = random()%4;
         switch (direction)
@@ -68,15 +66,13 @@ int main()
         m.direction = direction;
         m.msg_type = 1;
 
-        //TODO_10
-        //send the movement message
         if(key != 'x'){
-            zmq_send(requester, &m, sizeof(cockroaches_t), 0);
-            zmq_recv(requester, answer, 10, 0);        }
+            zmq_send(socket, &m, sizeof(cockroaches_t), 0);
+            zmq_recv(socket, answer, 10, 0);        }
     } while (key != 'x');
 
     endwin();			/* End curses mode		  */
-    zmq_close(requester);
+    zmq_close(socket);
     zmq_ctx_destroy(context);
  
 	return 0;

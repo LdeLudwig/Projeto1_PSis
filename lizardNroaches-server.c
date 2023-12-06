@@ -64,16 +64,16 @@ int main()
     ch_info_t char_data[100];
     int n_chars = 0;
 
-    cockroaches_t array_roaches[10];
-    lizard_t array_lizards[26];
-
     //Ex 1 - Lab 5:
     //  Socket to talk to clients
     void *context = zmq_ctx_new ();
     void *responder = zmq_socket (context, ZMQ_REP);
     int rc = zmq_bind (responder, "tcp://*:5555");
     
-	initscr();		    	
+    cockroaches_t array_roaches[10];
+    lizard_t array_lizards[26];
+	
+    initscr();		    	
 	cbreak();				
     keypad(stdscr, TRUE);   
 	noecho();			    
