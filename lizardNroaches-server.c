@@ -100,16 +100,14 @@ int main()
         for(int i=0; i < (sizeof(array_lizards) / sizeof(array_lizards[0])) - 1;i++){
             printf("%c", array_lizards[i].ch);
             //Message correspondent to the ch caracter.
-            zmq_recv (responder, &ch, sizeof(ch), 0);
-            int flag = 0;
+            /*zmq_recv (responder, &ch, sizeof(ch), 1);
             for (int i=0; i<(sizeof(array_lizards) / sizeof(array_lizards[0])) - 1;i++){
                 if(array_lizards[i].ch == ch){
-                    flag++;
-                    zmq_send(responder, "NO", 3, 0); 
+                    zmq_send(responder, "NO", 3, 1); 
                     break;
                 }
             }
-            zmq_recv (responder, &array_lizards[i], sizeof(lizard_t), 0);
+            zmq_recv (responder, &array_lizards[i], sizeof(lizard_t), 1);*/
             if(array_lizards[i].msg_type == 0){
                 //printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
                 ch = array_lizards[i].ch;
