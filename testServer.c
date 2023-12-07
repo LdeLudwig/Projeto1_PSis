@@ -9,6 +9,8 @@
 
 #define WINDOW_SIZE 30
 
+
+
 // STEP 1
 typedef struct ch_info_t
 {
@@ -59,8 +61,7 @@ int find_ch_info(ch_info_t char_data[], int n_char, int ch){
 }
 
 int main()
-{
-	 
+{	 
     //STEP 2
     ch_info_t char_data[100];
     int n_chars = 0;
@@ -70,6 +71,8 @@ int main()
     void *context = zmq_ctx_new ();
     void *responder = zmq_socket (context, ZMQ_REP);
     int rc = zmq_bind (responder, "tcp://*:5555");
+
+
     
     lizard_t array_lizard[26];
     cockroaches_t array_roaches[10];
@@ -79,7 +82,7 @@ int main()
     keypad(stdscr, TRUE);   
 	noecho();			    
 
-    /* creates a window and draws a border */
+    // creates a window and draws a border 
     WINDOW * my_win = newwin(WINDOW_SIZE, WINDOW_SIZE, 0, 0);
     box(my_win, 0 , 0);	
 	wrefresh(my_win);
@@ -120,21 +123,21 @@ int main()
                 lizard_pos_x = char_data[ch_pos].pos_x;
                 lizard_pos_y = char_data[ch_pos].pos_y;
                 lizard_ch = char_data[ch_pos].ch;
-                /*deletes old place */
+                //deletes old place 
                 wmove(my_win, lizard_pos_x, lizard_pos_y);
                 waddch(my_win,' ');
 
-                /* claculates new direction */
+                // claculates new direction 
                 direction = array_lizard[i].direction;
 
-                /* claculates new mark position */
+                //claculates new mark position 
                 new_position(&lizard_pos_x, &lizard_pos_y, direction);
                 char_data[ch_pos].pos_x = lizard_pos_x;
                 char_data[ch_pos].pos_y = lizard_pos_y;
 
             }        
         }
-        /* draw mark on new position */
+        // draw mark on new position 
         wmove(my_win, lizard_pos_x, lizard_pos_y);
         waddch(my_win,lizard_ch| A_BOLD);
         wrefresh(my_win);	
@@ -163,21 +166,21 @@ int main()
                 roach_pos_x = char_data[ch_pos].pos_x;
                 roach_pos_y = char_data[ch_pos].pos_y;
                 roach_num = char_data[ch_pos].ch;
-                /*deletes old place */
+                //deletes old place 
                 wmove(my_win, roach_pos_x, roach_pos_y);
                 waddch(my_win,' ');
 
-                /* claculates new direction */
+                //claculates new direction 
                 direction = array_roaches[i].direction;
 
-                /* claculates new mark position */
+                // claculates new mark position 
                 new_position(&roach_pos_x, &roach_pos_y, direction);
                 char_data[ch_pos].pos_x = roach_pos_x;
                 char_data[ch_pos].pos_y = roach_pos_y;
 
             }        
         }
-        /* draw mark on new position */
+        // draw mark on new position 
         wmove(my_win, roach_pos_x, roach_pos_y);
         wprintw(my_win, "%d", roach_num);
         wrefresh(my_win);	
@@ -185,7 +188,7 @@ int main()
     }
         
     }
-  	endwin();			/* End curses mode		  */
+  	endwin();			
 
     zmq_close(responder);
     zmq_ctx_destroy(context);
