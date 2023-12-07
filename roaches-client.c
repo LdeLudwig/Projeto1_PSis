@@ -20,12 +20,9 @@ int main()
 
     //TODO_5
     // read the character from the user
-    char ch;
-    do{
-        printf("what is your symbol(a..z)?: ");
-        ch = getchar();
-        ch = tolower(ch);  
-    }while(!isalpha(ch));
+    int ch;
+    ch = random()%5 + 1;
+    
 
     // TODO_6
     // send connection message
@@ -73,7 +70,7 @@ int main()
         if(key != 'x'){
             zmq_send(requester, &m, sizeof(cockroaches_t), 0);
             zmq_recv(requester, answer, 10, 0);        }
-    } while (key != 'x');
+    } while (key != 27);
 
     endwin();			/* End curses mode		  */
     zmq_close(requester);

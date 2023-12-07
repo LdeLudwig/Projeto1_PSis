@@ -9,5 +9,8 @@ lizardNroaches-server: lizardNroaches-server.c
 roaches-client: roaches-client.c
 	gcc roaches-client.c -o roaches-client -lncurses -lzmq
 
+test1: roaches-client
+	gcc testServer 
+
 clean:
 	rm lizard-client lizardNroaches-server roaches-client *.o

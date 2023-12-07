@@ -102,7 +102,7 @@ int main()
     for(int i=0; i<(sizeof(array_lizard)/sizeof(array_lizard[0]));i++){
         zmq_recv (responder, &array_lizard[i], sizeof(lizard_t), 0);
         
-        if(array_lizard[i].msg_type == 0 && array_lizard[i].message == LIZARD_CONNECTED){
+        if(array_lizard[i].msg_type == 0){
             lizard_ch = array_lizard[i].ch;
             lizard_pos_x = WINDOW_SIZE/2;
             lizard_pos_y = WINDOW_SIZE/2;
@@ -113,7 +113,7 @@ int main()
             char_data[n_chars].pos_y = lizard_pos_y;
             n_chars++;
         }
-        if(array_lizard[i].msg_type == 1 && array_lizard[i].message == LIZARD_MOVEMENT){
+        if(array_lizard[i].msg_type == 1){
             //STEP 4
             int ch_pos = find_ch_info(char_data, n_chars, array_lizard[i].ch);
             if(ch_pos != -1){
@@ -145,7 +145,7 @@ int main()
     for(int i=0; i<(sizeof(array_roaches)/sizeof(array_roaches[0]));i++){
         zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
         
-        if(array_roaches[i].msg_type == 0 && array_roaches[i].message == ROACH_CONNECTED){
+        if(array_roaches[i].msg_type == 0){
             roach_ch = array_roaches[i].ch;
             roach_pos_x = WINDOW_SIZE/3;
             roach_pos_y = WINDOW_SIZE/3;
@@ -156,7 +156,7 @@ int main()
             char_data[n_chars].pos_y = roach_pos_y;
             n_chars++;
         }
-        if(array_roaches[i].msg_type == 1 && array_roaches[i].message == ROACH_MOVEMENT){
+        if(array_roaches[i].msg_type == 1){
             //STEP 4
             int ch_pos = find_ch_info(char_data, n_chars, array_roaches[i].ch);
             if(ch_pos != -1){
