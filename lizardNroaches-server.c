@@ -98,7 +98,7 @@ int main()
     direction  direction;
     while (1)
     {
-        for(int i=0; i < (sizeof(array_lizards) / sizeof(array_lizards[0]));i++){
+        for(int i=0; i < (sizeof(array_lizards) / sizeof(array_lizards[0])) - 1;i++){
             zmq_recv (responder, &array_lizards[i], sizeof(lizard_t), 0);
             if(array_lizards[i].msg_type == 0){
                 ch = array_lizards[i].ch;
@@ -154,7 +154,7 @@ int main()
                     char_data[ch_pos].pos_y = pos_y;
                 }        
             }
-            for (int i = 0; i < sizeof(tail)/sizeof(tail[0]); i++) {
+            for (int i = 0; i < sizeof(tail)/sizeof(tail[0]) - 1; i++) {
                 tail_x = pos_x;
                 tail_y = pos_y;
                 if (direction == UP) {
