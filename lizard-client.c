@@ -7,6 +7,7 @@
 #include <ctype.h> 
 #include <stdlib.h>
 #include <zmq.h>
+#include <string.h>
 
  
 
@@ -24,14 +25,16 @@ int main()
         printf("what is your character(a..z)?: ");
         ch = getchar();
         ch = tolower(ch);  
-    }while(!isalpha(ch));
+        zmq_send (requester, &ch, sizeof(ch), 0);
+        zmq_recv(requester, answer, 50, 0);
+    }while(!isalpha(ch) && answer != "OK");
 
 
-    lizard_t m;
-    m.msg_type = 0;
-    m.ch = ch;
-    //strcpy(m.tail, ".....");
-    zmq_send (requester, &m, sizeof(m), 0);
+    lizard_t lizard;
+    lizard.msg_type = LIZARD_CONNECT;
+    lizard.ch = ch;
+    strcpy(lizard.tail, ".....");
+    zmq_send (requester, &lizard, sizeof(lizard), 0);
     zmq_recv(requester, answer, 50, 0);
 
 
@@ -44,7 +47,7 @@ int main()
 
     //TODO_9
     // prepare the movement message
-    m.msg_type = 1;
+    lizard.msg_type = LIZARD_MOVEMENT;
     
     int key;
     do
@@ -57,25 +60,25 @@ int main()
             mvprintw(0,0,"%d Left arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-           m.direction = LEFT;
+           lizard.direction = LEFT;
             break;
         case KEY_RIGHT:
             mvprintw(0,0,"%d Right arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-            m.direction = RIGHT;
+            lizard.direction = RIGHT;
             break;
         case KEY_DOWN:
             mvprintw(0,0,"%d Down arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-           m.direction = DOWN;
+           lizard.direction = DOWN;
             break;
         case KEY_UP:
             mvprintw(0,0,"%d :Up arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-            m.direction = UP;
+            lizard.direction = UP;
             break;
 
         default:
@@ -86,7 +89,7 @@ int main()
         //TODO_10
         //send the movement message
         if (key != 'x'){
-            zmq_send(requester, &m, sizeof(m), 0);
+            zmq_send(requester, &lizard, sizeof(lizard), 0);
             zmq_recv(requester, answer, 3, 0);  
         }
         refresh();			/* Print it on to the real screen */
