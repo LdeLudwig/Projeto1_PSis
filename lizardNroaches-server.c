@@ -6,14 +6,17 @@
 #include <sys/stat.h>
 #include <fcntl.h>  
 #include <stdlib.h>
+#include <string.h>
 
-#define WINDOW_SIZE 30
+
+#define WINDOW_SIZE 15
 
 // STEP 1
 typedef struct ch_info_t
 {
     int ch;
     int pos_x, pos_y;
+    char tail[5];
 } ch_info_t;
 
 direction random_direction(){
@@ -86,6 +89,7 @@ int main()
     int ch;
     int pos_x;
     int pos_y;
+    char tail[5];
 
     direction  direction;
     while (1)
@@ -101,6 +105,7 @@ int main()
                 char_data[n_chars].ch = ch;
                 char_data[n_chars].pos_x = pos_x;
                 char_data[n_chars].pos_y = pos_y;
+                //strncpy(char_data[n_chars].tail, array_lizards[i].tail, sizeof(char_data[n_chars].tail));
                 n_chars++;
             }
             if(array_lizards[i].msg_type == 1){
@@ -123,9 +128,31 @@ int main()
                     char_data[ch_pos].pos_y = pos_y;
                 }        
             }
+            char tail[5];
+            strcpy(tail, "....");
             /* draw mark on new position */
             wmove(my_win, pos_x, pos_y);
             waddch(my_win,ch| A_BOLD);
+            for(int i = 0; i<4;i++){
+                //Mano, por algum motivo tem um bug que as posições estão trocadas!
+                //Perguntar ao lucas e explicar logica correta e logica do codigo!
+                if(direction == UP){
+                    wmove(my_win, pos_x+i+1, pos_y);
+                    waddch(my_win,tail[i]| A_BOLD);
+                }
+                if(direction == DOWN){
+                    wmove(my_win, pos_x-i-1, pos_y);
+                    waddch(my_win,tail[i]| A_BOLD);
+                }
+                if(direction == LEFT){
+                    wmove(my_win, pos_x, pos_y+i+1);
+                    waddch(my_win,tail[i]| A_BOLD);
+                }
+                if(direction == RIGHT){
+                    wmove(my_win, pos_x, pos_y-i-1);
+                    waddch(my_win,tail[i]| A_BOLD);
+                }
+            }
             wrefresh(my_win);	
             zmq_send(responder, "OK", 3, 0); 
         }

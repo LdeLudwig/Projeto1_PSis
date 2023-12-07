@@ -4,7 +4,7 @@ typedef struct lizard_t
 {   
     int msg_type; /* 0 join   1 - move */
     char ch;
-    char arr[5];
+    char tail[5];
     direction direction ;
 
 }lizard_t;

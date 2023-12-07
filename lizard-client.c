@@ -26,9 +26,11 @@ int main()
         ch = tolower(ch);  
     }while(!isalpha(ch));
 
+
     lizard_t m;
     m.msg_type = 0;
     m.ch = ch;
+    //strcpy(m.tail, ".....");
     zmq_send (requester, &m, sizeof(m), 0);
     zmq_recv(requester, answer, 50, 0);
 
@@ -43,7 +45,6 @@ int main()
     //TODO_9
     // prepare the movement message
     m.msg_type = 1;
-    m.ch = ch;
     
     int key;
     do
