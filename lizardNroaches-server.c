@@ -89,7 +89,11 @@ int main()
     int ch;
     int pos_x;
     int pos_y;
-    char tail[5];
+    int tail_x;
+    int tail_y;
+    //Drawing the tail:
+    char tail[6];
+    strcpy(tail, ".....");
 
     direction  direction;
     while (1)
@@ -100,7 +104,6 @@ int main()
                 ch = array_lizards[i].ch;
                 pos_x = WINDOW_SIZE/2;
                 pos_y = WINDOW_SIZE/2;
-
                 //STEP 3
                 char_data[n_chars].ch = ch;
                 char_data[n_chars].pos_x = pos_x;
@@ -117,6 +120,30 @@ int main()
                     /*deletes old place */
                     wmove(my_win, pos_x, pos_y);
                     waddch(my_win,' ');
+                    for(int i = 0; i < sizeof(tail)/sizeof(tail[0]); i++){
+                        tail_x = pos_x;
+                        tail_y = pos_y;
+                        if(direction == UP){
+                            tail_x += i + 1;
+                            wmove(my_win, tail_x, tail_y);
+                            waddch(my_win,' ');
+                        }
+                        if (direction == DOWN) {
+                            tail_x -= i + 1;
+                            wmove(my_win, tail_x, tail_y);
+                            waddch(my_win,' ');
+                        }
+                        if (direction == LEFT) {
+                            tail_y += i + 1;
+                            wmove(my_win, tail_x, tail_y);
+                            waddch(my_win,' ');
+                        }
+                        if (direction == RIGHT) {
+                            tail_y -= i + 1;
+                            wmove(my_win, tail_x, tail_y);
+                            waddch(my_win,' ');
+                        }
+                    }
 
                     /* calculates new direction */
                     direction = array_lizards[i].direction;
@@ -127,30 +154,24 @@ int main()
                     char_data[ch_pos].pos_y = pos_y;
                 }        
             }
-
-            //Drawing the tail:
-            char tail[5];
-            strcpy(tail, "....");
-
-            for (int i = 0; i < 4; i++) {
-                int tail_x = pos_x;
-                int tail_y = pos_y;
-
+            for (int i = 0; i < sizeof(tail)/sizeof(tail[0]); i++) {
+                tail_x = pos_x;
+                tail_y = pos_y;
                 if (direction == UP) {
                     tail_x += i + 1;
-                    wmove(my_win, pos_x + i + 1, pos_y);
+                    wmove(my_win, tail_x, pos_y);
                     waddch(my_win, tail[i] | A_BOLD);
                 } else if (direction == DOWN) {
                     tail_x -= i + 1;
-                    wmove(my_win, pos_x - i - 1, pos_y);
+                    wmove(my_win, tail_x, pos_y);
                     waddch(my_win, tail[i] | A_BOLD);
                 } else if (direction == LEFT) {
                     tail_y += i + 1;
-                    wmove(my_win, pos_x, pos_y + i + 1);
+                    wmove(my_win, pos_x, tail_y);
                     waddch(my_win, tail[i] | A_BOLD);
                 } else if (direction == RIGHT) {
                     tail_y -= i + 1;
-                    wmove(my_win, pos_x, pos_y - i - 1);
+                    wmove(my_win, pos_x, tail_y);
                     waddch(my_win, tail[i] | A_BOLD);
                 }
             }
