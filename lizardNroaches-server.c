@@ -16,7 +16,6 @@ typedef struct ch_info_t
 {
     int ch;
     int pos_x, pos_y;
-    char tail[5];
 } ch_info_t;
 
 direction random_direction(){
@@ -99,8 +98,10 @@ int main()
     while (1)
     {
         for(int i=0; i < (sizeof(array_lizards) / sizeof(array_lizards[0])) - 1;i++){
+            printf("%c", array_lizards[i].ch);
             zmq_recv (responder, &array_lizards[i], sizeof(lizard_t), 0);
             if(array_lizards[i].msg_type == 0){
+                printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
                 ch = array_lizards[i].ch;
                 pos_x = WINDOW_SIZE/2;
                 pos_y = WINDOW_SIZE/2;
@@ -111,13 +112,16 @@ int main()
                 n_chars++;
             }
             if(array_lizards[i].msg_type == 1){
+
+                printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 1\n");
+                printf("A LETRA DA LAGARTA %c", array_lizards[i].ch);
                 //STEP 4
                 int ch_pos = find_ch_info(char_data, n_chars, array_lizards[i].ch);
                 if(ch_pos != -1){
                     pos_x = char_data[ch_pos].pos_x;
                     pos_y = char_data[ch_pos].pos_y;
                     ch = char_data[ch_pos].ch;
-                    /*deletes old place */
+                    //deletes old place 
                     wmove(my_win, pos_x, pos_y);
                     waddch(my_win,' ');
                     for(int i = 0; i < sizeof(tail)/sizeof(tail[0]); i++){
@@ -145,10 +149,10 @@ int main()
                         }
                     }
 
-                    /* calculates new direction */
+                    // calculates new direction 
                     direction = array_lizards[i].direction;
 
-                    /* calculates new mark position */
+                    // calculates new mark position 
                     new_position(&pos_x, &pos_y, direction);
                     char_data[ch_pos].pos_x = pos_x;
                     char_data[ch_pos].pos_y = pos_y;
@@ -157,6 +161,7 @@ int main()
             for (int i = 0; i < sizeof(tail)/sizeof(tail[0]) - 1; i++) {
                 tail_x = pos_x;
                 tail_y = pos_y;
+                printf("UEPA!\n");
                 if (direction == UP) {
                     tail_x += i + 1;
                     wmove(my_win, tail_x, pos_y);
@@ -176,7 +181,7 @@ int main()
                 }
             }
 
-            /* draw mark on new position */
+            // draw mark on new position 
             wmove(my_win, pos_x, pos_y);
             waddch(my_win,ch| A_BOLD);
             wrefresh(my_win);	
@@ -185,6 +190,7 @@ int main()
 
         for(int i=0; i < (sizeof(array_roaches)/sizeof(array_roaches[0]));i++){
             zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
+            printf("\nENTROU ENTROU NA COCKROACHES");
             if(array_roaches[i].msg_type == 0){
                 ch = array_roaches[i].ch;
                 pos_x = WINDOW_SIZE/2;
@@ -198,31 +204,32 @@ int main()
             }
             if(array_roaches[i].msg_type == 1){
                 //STEP 4
+                printf("\nENTROU ENTROU NA COCKROACHES MSG TYPE 1");
                 int ch_pos = find_ch_info(char_data, n_chars, array_roaches[i].ch);
                 if(ch_pos != -1){
                     pos_x = char_data[ch_pos].pos_x;
                     pos_y = char_data[ch_pos].pos_y;
                     ch = char_data[ch_pos].ch;
-                    /*deletes old place */
+                    //deletes old place 
                     wmove(my_win, pos_x, pos_y);
                     waddch(my_win,' ');
 
-                    /* calculates new direction */
+                    // calculates new direction
                     direction = array_roaches[i].direction;
 
-                    /* calculates new mark position */
+                    // calculates new mark position 
                     new_position(&pos_x, &pos_y, direction);
                     char_data[ch_pos].pos_x = pos_x;
                     char_data[ch_pos].pos_y = pos_y;
-                }      
-                wmove(my_win, pos_x, pos_y);
-                waddch(my_win,ch| A_BOLD);
-                wrefresh(my_win);	
-                zmq_send(responder, "OK", 3, 0);  
+                }       
             }
+            wmove(my_win, pos_x, pos_y);
+            waddch(my_win,ch| A_BOLD);
+            wrefresh(my_win);	
+            zmq_send(responder, "OK", 3, 0); 
         }
     }
-  	endwin();			/* End curses mode		  */
+  	endwin();			// End curses mode
 
     zmq_close(responder);
     zmq_ctx_destroy(context);
