@@ -98,10 +98,27 @@ int main()
     while (1)
     {
         for(int i=0; i < (sizeof(array_lizards) / sizeof(array_lizards[0])) - 1;i++){
-            printf("%c", array_lizards[i].ch);
+            //PLEASE, IF ERROR TAKE IT OFF
+            //Message correspondent to the ch caracter.
+            /*zmq_recv (responder, &ch, sizeof(ch), 0);
+            int flag = 0;
+            for (int i=0; i<(sizeof(array_lizards) / sizeof(array_lizards[0])) - 1;i++){
+                if(array_lizards[i].ch == ch){
+                    flag++;
+                    zmq_send(responder, "NO", 3, 0); 
+                    break;
+                }
+            }
+            if(flag == 0){
+                zmq_send(responder, "OK", 3, 0); 
+            }
+            else{
+                break;
+            }*/
+            //printf("%c", array_lizards[i].ch);
             zmq_recv (responder, &array_lizards[i], sizeof(lizard_t), 0);
             if(array_lizards[i].msg_type == 0){
-                printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
+                //printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
                 ch = array_lizards[i].ch;
                 pos_x = WINDOW_SIZE/2;
                 pos_y = WINDOW_SIZE/2;
@@ -113,8 +130,8 @@ int main()
             }
             if(array_lizards[i].msg_type == 1){
 
-                printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 1\n");
-                printf("A LETRA DA LAGARTA %c", array_lizards[i].ch);
+                //printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 1\n");
+                //printf("A LETRA DA LAGARTA %c", array_lizards[i].ch);
                 //STEP 4
                 int ch_pos = find_ch_info(char_data, n_chars, array_lizards[i].ch);
                 if(ch_pos != -1){
@@ -161,7 +178,7 @@ int main()
             for (int i = 0; i < sizeof(tail)/sizeof(tail[0]) - 1; i++) {
                 tail_x = pos_x;
                 tail_y = pos_y;
-                printf("UEPA!\n");
+                //printf("UEPA!\n");
                 if (direction == UP) {
                     tail_x += i + 1;
                     wmove(my_win, tail_x, pos_y);
@@ -190,7 +207,7 @@ int main()
 
         for(int i=0; i < (sizeof(array_roaches)/sizeof(array_roaches[0]));i++){
             zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
-            printf("\nENTROU ENTROU NA COCKROACHES");
+            //printf("\nENTROU ENTROU NA COCKROACHES");
             if(array_roaches[i].msg_type == 0){
                 ch = array_roaches[i].ch;
                 pos_x = WINDOW_SIZE/2;
@@ -204,7 +221,7 @@ int main()
             }
             if(array_roaches[i].msg_type == 1){
                 //STEP 4
-                printf("\nENTROU ENTROU NA COCKROACHES MSG TYPE 1");
+                //printf("\nENTROU ENTROU NA COCKROACHES MSG TYPE 1");
                 int ch_pos = find_ch_info(char_data, n_chars, array_roaches[i].ch);
                 if(ch_pos != -1){
                     pos_x = char_data[ch_pos].pos_x;

@@ -7,6 +7,7 @@
 #include <ctype.h> 
 #include <stdlib.h>
 #include <zmq.h>
+#include <unistd.h>
 
  
 
@@ -19,12 +20,27 @@ int main()
     void *requester = zmq_socket (context, ZMQ_REQ);
     zmq_connect (requester, "tcp://localhost:5555");
 
+    //Before it was like this:
     char ch;
     do{
         printf("what is your character(a..z)?: ");
         ch = getchar();
         ch = tolower(ch);  
     }while(!isalpha(ch));
+    
+    //Não funciona:
+    /*char ch;
+    do{
+        printf("what is your character(a..z)?: ");
+        ch = getchar();
+        ch = tolower(ch);  
+        printf("\nO caracter é: %d", ch);
+        zmq_send (requester, &ch, sizeof(ch), 1);
+        printf("\nEnviei a mensagem...");
+        zmq_recv(requester, answer, 50, 1);
+        printf("No aguardo de uma resposta...");
+        sleep(50);
+    }while(!isalpha(ch) && answer != "OK");*/
 
 
     lizard_t m;
