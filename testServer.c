@@ -6,8 +6,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>  
 #include <stdlib.h>
+#include <string.h>
 
 #define WINDOW_SIZE 30
+#define BUFFER_SIZE 1024
 
 
 
@@ -66,6 +68,9 @@ int main()
     ch_info_t char_data[100];
     int n_chars = 0;
 
+    int buffer_roach[BUFFER_SIZE];
+    char buffer_lizard[BUFFER_SIZE];
+
     //Ex 1 - Lab 5:
     //  Socket to talk to clients
     void *context = zmq_ctx_new ();
@@ -73,7 +78,6 @@ int main()
     int rc = zmq_bind (responder, "tcp://*:5555");
 
 
-    
     lizard_t array_lizard[26];
     cockroaches_t array_roaches[10];
     
@@ -103,8 +107,9 @@ int main()
     {
     
     for(int i=0; i<(sizeof(array_lizard)/sizeof(array_lizard[0]));i++){
-        zmq_recv (responder, &array_lizard[i], sizeof(lizard_t), 0);
+        zmq_recv (responder, &buffer_lizard, sizeof(BUFFER_SIZE), 0);
         
+
         if(array_lizard[i].Message == LIZARD_CONNECT){
             lizard_ch = array_lizard[i].ch;
             lizard_pos_x = WINDOW_SIZE/2;
@@ -146,7 +151,7 @@ int main()
 
 
     for(int i=0; i<(sizeof(array_roaches)/sizeof(array_roaches[0]));i++){
-        zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
+        zmq_recv (responder, &buffer_roach, sizeof(BUFFER_SIZE), 0);
         
         if(array_roaches[i].Message == ROACH_CONNECT){
             roach_num = array_roaches[i].num;
