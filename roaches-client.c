@@ -20,18 +20,17 @@ int main()
 
     //TODO_5
     // read the character from the user
-    int ch;
-    ch = random()%5 + 1;
+    int num;
+    num = random()%5 + 1;
     
 
     // TODO_6
     // send connection message
-    cockroaches_t m;
-    m.msg_type = 0;
-    m.ch = ch;
-    zmq_send(requester, &m, sizeof(cockroaches_t), 0);
+    cockroaches_t roach;
+    roach.num = num;
+    roach.Message = ROACH_CONNECT;
+    zmq_send(requester, &roach, sizeof(cockroaches_t), 0);
     //zmq_recv(requester, answer, 10, 0);
-    
     
 
     int sleep_delay;
@@ -62,17 +61,17 @@ int main()
 
         //TODO_9
         // prepare the movement message
-        m.direction = direction;
-        m.msg_type = 1;
+        roach.direction = direction;
+        roach.Message = ROACH_MOVEMENT;
 
         //TODO_10
         //send the movement message
         if(key != 'x'){
-            zmq_send(requester, &m, sizeof(cockroaches_t), 0);
+            zmq_send(requester, &roach, sizeof(cockroaches_t), 0);
             zmq_recv(requester, answer, 10, 0);        }
     } while (key != 27);
 
-    endwin();			/* End curses mode		  */
+    
     zmq_close(requester);
     zmq_ctx_destroy(context);
  

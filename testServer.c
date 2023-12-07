@@ -86,7 +86,7 @@ int main()
 
     //lizard and roach content
     int lizard_ch;
-    int roach_ch;
+    int roach_num;
 
     //lizard and roach position
     int lizard_pos_x;
@@ -102,7 +102,7 @@ int main()
     for(int i=0; i<(sizeof(array_lizard)/sizeof(array_lizard[0]));i++){
         zmq_recv (responder, &array_lizard[i], sizeof(lizard_t), 0);
         
-        if(array_lizard[i].msg_type == 0){
+        if(array_lizard[i].Message == LIZARD_CONNECT){
             lizard_ch = array_lizard[i].ch;
             lizard_pos_x = WINDOW_SIZE/2;
             lizard_pos_y = WINDOW_SIZE/2;
@@ -113,7 +113,7 @@ int main()
             char_data[n_chars].pos_y = lizard_pos_y;
             n_chars++;
         }
-        if(array_lizard[i].msg_type == 1){
+        if(array_lizard[i].Message == LIZARD_MOVEMENT){
             //STEP 4
             int ch_pos = find_ch_info(char_data, n_chars, array_lizard[i].ch);
             if(ch_pos != -1){
@@ -145,24 +145,24 @@ int main()
     for(int i=0; i<(sizeof(array_roaches)/sizeof(array_roaches[0]));i++){
         zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
         
-        if(array_roaches[i].msg_type == 0){
-            roach_ch = array_roaches[i].ch;
+        if(array_roaches[i].Message == ROACH_CONNECT){
+            roach_num = array_roaches[i].num;
             roach_pos_x = WINDOW_SIZE/3;
             roach_pos_y = WINDOW_SIZE/3;
 
             //STEP 3
-            char_data[n_chars].ch = roach_ch;
+            char_data[n_chars].ch = roach_num;
             char_data[n_chars].pos_x = roach_pos_x;
             char_data[n_chars].pos_y = roach_pos_y;
             n_chars++;
         }
-        if(array_roaches[i].msg_type == 1){
+        if(array_roaches[i].Message == ROACH_MOVEMENT){
             //STEP 4
-            int ch_pos = find_ch_info(char_data, n_chars, array_roaches[i].ch);
+            int ch_pos = find_ch_info(char_data, n_chars, array_roaches[i].num);
             if(ch_pos != -1){
                 roach_pos_x = char_data[ch_pos].pos_x;
                 roach_pos_y = char_data[ch_pos].pos_y;
-                roach_ch = char_data[ch_pos].ch;
+                roach_num = char_data[ch_pos].ch;
                 /*deletes old place */
                 wmove(my_win, roach_pos_x, roach_pos_y);
                 waddch(my_win,' ');
@@ -179,7 +179,7 @@ int main()
         }
         /* draw mark on new position */
         wmove(my_win, roach_pos_x, roach_pos_y);
-        wprintw(my_win, "%d", roach_ch);
+        wprintw(my_win, "%d", roach_num);
         wrefresh(my_win);	
         zmq_send(responder, "OK", 3, 0); 
     }
