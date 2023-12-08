@@ -205,7 +205,7 @@ int main()
             zmq_send(responder, "OK", 3, 0); 
         }
 
-        for(int i=0; i < (sizeof(array_roaches)/sizeof(array_roaches[0]));i++){
+        for(int i=0; i < (sizeof(array_roaches)/sizeof(array_roaches[0])) - 1;i++){
             zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
             //printf("\nENTROU ENTROU NA COCKROACHES");
             if(array_roaches[i].msg_type == 0){
@@ -240,10 +240,10 @@ int main()
                     char_data[ch_pos].pos_y = pos_y;
                 }       
             }
-            wmove(my_win, pos_x, pos_y);
-            waddch(my_win,ch| A_BOLD);
-            wrefresh(my_win);	
-            zmq_send(responder, "OK", 3, 0); 
+        wmove(my_win, pos_x, pos_y);
+        waddch(my_win,ch| A_BOLD);
+        wrefresh(my_win);	
+        zmq_send(responder, "OK", 3, 0); 
         }
     }
   	endwin();			// End curses mode

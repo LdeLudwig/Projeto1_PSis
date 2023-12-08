@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <zmq.h>
 #include <unistd.h>
-
+#include <string.h>
  
 
 int main()
@@ -44,9 +44,15 @@ int main()
 
 
     lizard_t m;
-    m.msg_type = 0;
+    m.msg_type = LIZARD_CONNECT;
     m.ch = ch;
-    //strcpy(m.tail, ".....");
+    m.species_type = LIZARD;
+    strcpy(m.tail, ".....");
+
+    //Vou enviar a especie primeiro:
+    zmq_send (requester, &m.species_type, sizeof(m.species_type), 0);
+    zmq_recv(requester, answer, 50, 0);
+
     zmq_send (requester, &m, sizeof(m), 0);
     zmq_recv(requester, answer, 50, 0);
 
@@ -60,7 +66,7 @@ int main()
 
     //TODO_9
     // prepare the movement message
-    m.msg_type = 1;
+    m.msg_type = LIZARD_MOVEMENT;
     
     int key;
     do

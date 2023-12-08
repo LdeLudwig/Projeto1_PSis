@@ -1,4 +1,4 @@
-all: lizard-client lizardNroaches-server roaches-client
+all: lizard-client lizardNroaches-server lizardNroaches2 roaches-client
 
 lizard-client: lizard-client.c
 	gcc lizard-client.c -o lizard-client -lncurses -lzmq
@@ -6,8 +6,11 @@ lizard-client: lizard-client.c
 lizardNroaches-server: lizardNroaches-server.c
 	gcc lizardNroaches-server.c -o lizardNroaches-server -lncurses -lzmq
 
+lizardNroaches2: lizardNroaches2.c
+	gcc lizardNroaches2.c -o lizardNroaches2 -lncurses -lzmq
+
 roaches-client: roaches-client.c
 	gcc roaches-client.c -o roaches-client -lncurses -lzmq
 
 clean:
-	rm lizard-client lizardNroaches-server roaches-client *.o
+	rm lizard-client lizardNroaches-server lizardNroaches2 roaches-client *.o

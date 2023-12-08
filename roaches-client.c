@@ -30,8 +30,14 @@ int main()
     // TODO_6
     // send connection message
     cockroaches_t m;
-    m.msg_type = 0;
+    m.msg_type = ROACH_CONNECT;
     m.ch = ch;
+    m.species_type = ROACH;
+    //Vou enviar a especie primeiro:
+    zmq_send(socket, &m.species_type, sizeof(m.species_type), 0);
+    zmq_recv(socket, answer, 50, 0);
+
+    //Depois envio o individuo:
     zmq_send(socket, &m, sizeof(cockroaches_t), 0);
     zmq_recv(socket, answer, 10, 0);
 
@@ -39,7 +45,7 @@ int main()
     direction direction;
     int n = 0;
     int key;
-    do
+    while(1)
     {
         sleep_delay = random()%700000;
         n++;
@@ -64,7 +70,7 @@ int main()
         //TODO_9
         // prepare the movement message
         m.direction = direction;
-        m.msg_type = 1;
+        m.msg_type = ROACH_MOVEMENT;
 
         if(key != 'x'){
             zmq_send(socket, &m, sizeof(cockroaches_t), 0);
