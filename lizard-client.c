@@ -71,6 +71,7 @@ int main()
     int key;
     do
     {
+        //m.msg_type = LIZARD_MOVEMENT;
     	key = getch();		
         n++;
         switch (key)

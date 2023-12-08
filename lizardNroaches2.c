@@ -141,7 +141,7 @@ int main()
             for(int i=0; i < array_lizards.size - 1;i++){
                 //printf("\nDentro do loop msg type: %d\nchar: %d\n", array_lizards.array[i].msg_type, array_lizards.array[i].ch);
                 if(array_lizards.array[i].msg_type == LIZARD_CONNECT){
-                    //printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
+                    printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
                     ch = array_lizards.array[i].ch;
                     pos_x = WINDOW_SIZE/2;
                     pos_y = WINDOW_SIZE/2;
@@ -152,6 +152,7 @@ int main()
                     n_chars++;
                 }
                 if(array_lizards.array[i].msg_type == LIZARD_MOVEMENT){
+                    printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 1\n");
                     int ch_pos = find_ch_info(char_data, n_chars, array_lizards.array[i].ch);
                     if(ch_pos != -1){
                         pos_x = char_data[ch_pos].pos_x;
@@ -224,7 +225,7 @@ int main()
                 zmq_send(responder, "OK", 3, 0); 
             }
         }
-        else{
+        /*else{
             zmq_send(responder, "OK", 3, 0);
             cockroaches_t new_roach;
             zmq_recv(responder, &new_roach, sizeof(new_roach), 0);
@@ -267,7 +268,7 @@ int main()
                 wrefresh(my_win);	
                 zmq_send(responder, "OK", 3, 0); 
             }
-        }
+        }*/
     }
     endwin();			// End curses mode
 
