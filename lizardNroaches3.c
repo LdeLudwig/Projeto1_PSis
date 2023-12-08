@@ -200,36 +200,35 @@ int main()
                     new_position(&pos_x, &pos_y, direction);
                     char_data[ch_pos].pos_x = pos_x;
                     char_data[ch_pos].pos_y = pos_y;
-                }        
-            }
-            for (int i = 0; i < sizeof(tail)/sizeof(tail[0]) - 1; i++) {
-                tail_x = pos_x;
-                tail_y = pos_y;
-                //printf("UEPA!\n");
-                if (direction == UP) {
-                    tail_x += i + 1;
-                    wmove(my_win, tail_x, pos_y);
-                    waddch(my_win, tail[i] | A_BOLD);
-                } else if (direction == DOWN) {
-                    tail_x -= i + 1;
-                    wmove(my_win, tail_x, pos_y);
-                    waddch(my_win, tail[i] | A_BOLD);
-                } else if (direction == LEFT) {
-                    tail_y += i + 1;
-                    wmove(my_win, pos_x, tail_y);
-                    waddch(my_win, tail[i] | A_BOLD);
-                } else if (direction == RIGHT) {
-                    tail_y -= i + 1;
-                    wmove(my_win, pos_x, tail_y);
-                    waddch(my_win, tail[i] | A_BOLD);
+                }   
+                for (int i = 0; i < sizeof(tail)/sizeof(tail[0]) - 1; i++) {
+                    tail_x = pos_x;
+                    tail_y = pos_y;
+                    //printf("UEPA!\n");
+                    if (direction == UP) {
+                        tail_x += i + 1;
+                        wmove(my_win, tail_x, pos_y);
+                        waddch(my_win, tail[i] | A_BOLD);
+                    } else if (direction == DOWN) {
+                        tail_x -= i + 1;
+                        wmove(my_win, tail_x, pos_y);
+                        waddch(my_win, tail[i] | A_BOLD);
+                    } else if (direction == LEFT) {
+                        tail_y += i + 1;
+                        wmove(my_win, pos_x, tail_y);
+                        waddch(my_win, tail[i] | A_BOLD);
+                    } else if (direction == RIGHT) {
+                        tail_y -= i + 1;
+                        wmove(my_win, pos_x, tail_y);
+                        waddch(my_win, tail[i] | A_BOLD);
+                    }
                 }
+                // draw mark on new position 
+                wmove(my_win, pos_x, pos_y);
+                waddch(my_win,ch| A_BOLD);
+                wrefresh(my_win);	
+                zmq_send(responder, "OK", 3, 0);      
             }
-
-            // draw mark on new position 
-            wmove(my_win, pos_x, pos_y);
-            waddch(my_win,ch| A_BOLD);
-            wrefresh(my_win);	
-            zmq_send(responder, "OK", 3, 0); 
         }
     
         for(int i=0; i < array_roaches.size - 1;i++){

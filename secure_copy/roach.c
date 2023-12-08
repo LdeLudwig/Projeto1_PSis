@@ -30,7 +30,7 @@ int main()
     // TODO_6
     // send connection message
     cockroaches_t m;
-    m.msg_type = 0;
+    m.msg_type = 2;
     m.ch = ch;
     zmq_send(socket, &m, sizeof(cockroaches_t), 0);
     zmq_recv(socket, answer, 10, 0);
@@ -64,7 +64,7 @@ int main()
         //TODO_9
         // prepare the movement message
         m.direction = direction;
-        m.msg_type = 1;
+        m.msg_type = 3;
 
         if(key != 'x'){
             zmq_send(socket, &m, sizeof(cockroaches_t), 0);
