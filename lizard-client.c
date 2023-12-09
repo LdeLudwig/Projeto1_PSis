@@ -53,9 +53,6 @@ int main()
     zmq_send (requester, &m.species_type, sizeof(m.species_type), 0);
     zmq_recv(requester, answer, 50, 0);
 
-    zmq_send (requester, &m, sizeof(m), 0);
-    zmq_recv(requester, answer, 50, 0);
-
 
 	initscr();			/* Start curses mode 		*/
 	cbreak();				/* Line buffering disabled	*/
@@ -63,7 +60,8 @@ int main()
 	noecho();			/* Don't echo() while we do getch */
 
     int n = 0;
-
+    zmq_send (requester, &m, sizeof(m), 0);
+    zmq_recv(requester, answer, 50, 0);
     //TODO_9
     // prepare the movement message
     m.msg_type = LIZARD_MOVEMENT;
@@ -71,7 +69,6 @@ int main()
     int key;
     do
     {
-        //m.msg_type = LIZARD_MOVEMENT;
     	key = getch();		
         n++;
         switch (key)
