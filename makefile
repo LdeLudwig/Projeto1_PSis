@@ -10,7 +10,7 @@ lizardNroaches2: lizardNroaches2.c
 	gcc lizardNroaches2.c -o lizardNroaches2 -lncurses -lzmq
 
 lizardNroaches3: lizardNroaches3.c
-	gcc lizardNroaches2.c -o lizardNroaches3 -lncurses -lzmq
+	gcc lizardNroaches3.c -o lizardNroaches3 -lncurses -lzmq
 
 roaches-client: roaches-client.c
 	gcc roaches-client.c -o roaches-client -lncurses -lzmq

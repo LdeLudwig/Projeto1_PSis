@@ -207,7 +207,7 @@ int main()
         for(int i=0; i < (sizeof(array_roaches)/sizeof(array_roaches[0])) - 1;i++){
             zmq_recv (responder, &array_roaches[i], sizeof(cockroaches_t), 0);
             //printf("\nENTROU ENTROU NA COCKROACHES");
-            if(array_roaches[i].msg_type == 2){
+            if(array_roaches[i].msg_type == 0){
                 ch = array_roaches[i].ch;
                 pos_x = WINDOW_SIZE/2;
                 pos_y = WINDOW_SIZE/2;
@@ -218,7 +218,7 @@ int main()
                 char_data[n_chars].pos_y = pos_y;
                 n_chars++;
             }
-            if(array_roaches[i].msg_type == 3){
+            if(array_roaches[i].msg_type == 1){
                 //STEP 4
                 //printf("\nENTROU ENTROU NA COCKROACHES MSG TYPE 1");
                 int ch_pos = find_ch_info(char_data, n_chars, array_roaches[i].ch);
