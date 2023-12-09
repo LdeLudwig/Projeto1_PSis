@@ -69,7 +69,13 @@ int main()
     int key;
     do
     {
-    	key = getch();		
+    	key = getch();
+        if (key == 'q' || key == 'Q') {
+            m.msg_type = LIZARD_DISCONNECT;
+            zmq_send(requester, &m, sizeof(m), 0);
+            zmq_recv(requester, answer, 3, 0);  
+            break; // Saia do loop quando 'q' for pressionado
+        }		
         n++;
         switch (key)
         {

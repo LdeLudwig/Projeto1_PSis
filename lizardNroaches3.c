@@ -9,12 +9,11 @@
 #include <string.h>
 #include <assert.h>
 
-#define WINDOW_SIZE 15
+#define WINDOW_SIZE 30
 #define MAX_LIZARDS 26
-#define MAX_ROACHES 50
+#define MAX_ROACHES (WINDOW_SIZE * WINDOW_SIZE / 3)
 
 
-// STEP 1
 typedef struct ch_info_t
 {
     int ch;
@@ -80,7 +79,7 @@ void append_lizard(lizard_array_t *lizard_array, lizard_t *new_lizard) {
         lizard_array->array[lizard_array->size] = *new_lizard;
         lizard_array->size++;
     } else {
-        // Lidar com a condição de array cheio
+        // Lidar com a condição de array cheio, temos de implementar novas coisas
         printf("Erro: Array de lagartos cheio\n");
     }
 }
@@ -94,14 +93,6 @@ void update_lizard(lizard_array_t *lizard_array, lizard_t *new_lizard){
 }
 //ROACH FUNCTIONS:
 void append_roach(cockroaches_array_t *roach_array, cockroaches_t *new_roach) {
-    // Verifica se a barata já está no array
-    /*for (int i = 0; i < roach_array->size; i++) {
-        if (roach_array->array[i].ch == new_roach.ch) {
-            printf("Barata já existe no array\n");
-            return;  // Não adiciona a barata se ela já existir
-        }
-    }*/
-
     if (roach_array->size < MAX_ROACHES) {
         roach_array->array[roach_array->size] = *new_roach;
         roach_array->size++;
@@ -164,26 +155,21 @@ int main()
             lizard_t new_lizard;
             zmq_recv(responder, &new_lizard, sizeof(new_lizard), 0);
             
-            // Verifica se a lizard já está no array
+            //Check if the lizard is in the array
             int lizard_pos = find_ch_info(char_data, n_chars, new_lizard.ch);
             if (lizard_pos == -1) {
                 append_lizard(&array_lizards, &new_lizard);
             }
-            //printf("\nAGORA... msg type: %d\nEndereço de memoria: %p", new_lizard.msg_type, &new_lizard);
-            //for(int i=0;i < array_lizards.size;i++){
-            //    update_lizard(&array_lizards, &new_lizard);
-            //}
-
         }
         else{
             cockroaches_t new_roach;
             zmq_recv(responder, &new_roach, sizeof(new_roach), 0);
             
-            // Verifica se a barata já está no array
+            //Check if the roach is in the array
             int roach_pos = find_ch_info(char_data, n_chars, new_roach.ch);
 
             if (roach_pos == -1) {
-                // Barata não está no array, adiciona ao array e atualiza posição
+                //If the roach is not in the array, it will be added
                 append_roach(&array_roaches, &new_roach);
             }
             //printf("\nmsg type: %d\nEndereço de memoria: %p", new_roach.msg_type, &new_roach);
@@ -275,6 +261,10 @@ int main()
                 wrefresh(my_win);	
                 //zmq_send(responder, "OK", 3, 0);      
             }
+            if(array_lizards.array[i].msg_type == LIZARD_DISCONNECT){
+                zmq_send(responder, "OK", 3, 0);
+                //Tem de dar um jeito de limpar isso aq
+            }
             zmq_send(responder, "OK", 3, 0);
             zmq_recv(responder, &array_lizards.array[i], sizeof(array_lizards.array[i]), 0);
         }
@@ -282,7 +272,7 @@ int main()
         for(int i=0; i < array_roaches.size;i++){
             //printf("TESTANDO msg_type %dEndereço de memoria: %p\n", array_roaches.array[i].msg_type, &array_roaches.array[i]);
             //printf("\nUHUUL UPDATE!  %d\nEndereço de memoria: %p\n", array_roaches.array[i].msg_type, &array_roaches.array[i]);
-            if(array_roaches.array[i].msg_type == 2){
+            if(array_roaches.array[i].msg_type == ROACH_CONNECT){
                // printf("\nENTROU ENTROU NA COCKROACHES MSG TYPE: %d", array_roaches.array[i].msg_type);
                 ch = array_roaches.array[i].ch;
                 pos_x = WINDOW_SIZE/2;

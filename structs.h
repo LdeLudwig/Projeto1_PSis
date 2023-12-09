@@ -1,5 +1,5 @@
 typedef enum direction {UP, DOWN, LEFT, RIGHT} direction;
-typedef enum message {LIZARD_CONNECT, LIZARD_MOVEMENT, ROACH_CONNECT, ROACH_MOVEMENT} message;
+typedef enum message {LIZARD_CONNECT, LIZARD_MOVEMENT, ROACH_CONNECT, ROACH_MOVEMENT, LIZARD_DISCONNECT} message;
 typedef enum species {LIZARD, ROACH} species;
 
 typedef struct lizard_t
