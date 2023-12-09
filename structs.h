@@ -8,15 +8,13 @@ typedef struct lizard_t
     char ch;
     char tail[6];
     direction direction;
-    species species_type;
-
+    /* data */
 }lizard_t;
 
 typedef struct cockroaches_t
 {   
     message msg_type; 
-    char ch; 
+    int num; 
     direction direction ;
-    species species_type;
     /* data */
 }cockroaches_t;

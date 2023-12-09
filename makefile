@@ -1,4 +1,4 @@
-all: lizard-client lizardNroaches-server lizardNroaches2 lizardNroaches3 roaches-client
+all: lizard-client lizardNroaches-server lizardNroaches2 lizardNroaches3 lizardNroaches4 roaches-client
 
 lizard-client: lizard-client.c
 	gcc lizard-client.c -o lizard-client -lncurses -lzmq

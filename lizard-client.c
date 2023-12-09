@@ -15,7 +15,6 @@ int main()
 {
     char answer[50];
     // create and open the zmq socket
-    printf ("Connecting to hello world server…\n");
     void *context = zmq_ctx_new ();
     void *requester = zmq_socket (context, ZMQ_REQ);
     zmq_connect (requester, "tcp://localhost:5555");
@@ -28,20 +27,11 @@ int main()
         ch = tolower(ch);  
     }while(!isalpha(ch));
     
-    //Não funciona:
-    /*char ch;
-    do{
-        printf("what is your character(a..z)?: ");
-        ch = getchar();
-        ch = tolower(ch);  
-        printf("\nO caracter é: %d", ch);
-        zmq_send (requester, &ch, sizeof(ch), 1);
-        printf("\nEnviei a mensagem...");
-        zmq_recv(requester, answer, 50, 1);
-        printf("No aguardo de uma resposta...");
-        sleep(50);
-    }while(!isalpha(ch) && answer != "OK");*/
 
+    lizard_t lizard;
+    lizard.msg_type = LIZARD_CONNECT;
+    lizard.ch = ch;
+    strcpy(lizard.tail, ".....");
 
     lizard_t m;
     m.msg_type = LIZARD_CONNECT;
@@ -64,7 +54,7 @@ int main()
     zmq_recv(requester, answer, 50, 0);
     //TODO_9
     // prepare the movement message
-    m.msg_type = LIZARD_MOVEMENT;
+    lizard.msg_type = LIZARD_MOVEMENT;
     
     int key;
     do
@@ -83,25 +73,25 @@ int main()
             mvprintw(0,0,"%d Left arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-           m.direction = LEFT;
+           lizard.direction = LEFT;
             break;
         case KEY_RIGHT:
             mvprintw(0,0,"%d Right arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-            m.direction = RIGHT;
+            lizard.direction = RIGHT;
             break;
         case KEY_DOWN:
             mvprintw(0,0,"%d Down arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-           m.direction = DOWN;
+           lizard.direction = DOWN;
             break;
         case KEY_UP:
             mvprintw(0,0,"%d :Up arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-            m.direction = UP;
+            lizard.direction = UP;
             break;
 
         default:
@@ -112,7 +102,7 @@ int main()
         //TODO_10
         //send the movement message
         if (key != 'x'){
-            zmq_send(requester, &m, sizeof(m), 0);
+            zmq_send(requester, &lizard, sizeof(lizard_t), 0);
             zmq_recv(requester, answer, 3, 0);  
         }
         refresh();			/* Print it on to the real screen */
