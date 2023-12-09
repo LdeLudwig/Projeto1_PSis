@@ -166,9 +166,9 @@ int main()
                 // Barata não está no array, adiciona ao array e atualiza posição
                 append_roach(&array_roaches, &new_roach);
             }
-            printf("\nmsg type: %d\nEndereço de memoria: %p", new_roach.msg_type, &new_roach);
+            //printf("\nmsg type: %d\nEndereço de memoria: %p", new_roach.msg_type, &new_roach);
             for(int i=0;i < array_roaches.size;i++){
-                update_roach(&array_roaches, &array_roaches.array[i]);
+                update_roach(&array_roaches, &new_roach);
             }
         }
 
@@ -258,10 +258,10 @@ int main()
         }
     
         for(int i=0; i < array_roaches.size;i++){
-            printf("TESTANDO msg_type %dEndereço de memoria: %p\n", array_roaches.array[i].msg_type, &array_roaches.array[i]);
+            //printf("TESTANDO msg_type %dEndereço de memoria: %p\n", array_roaches.array[i].msg_type, &array_roaches.array[i]);
             //printf("\nUHUUL UPDATE!  %d\nEndereço de memoria: %p\n", array_roaches.array[i].msg_type, &array_roaches.array[i]);
             if(array_roaches.array[i].msg_type == 2){
-                //printf("\nENTROU ENTROU NA COCKROACHES MSG TYPE: %d", array_roaches.array[i].msg_type);
+               // printf("\nENTROU ENTROU NA COCKROACHES MSG TYPE: %d", array_roaches.array[i].msg_type);
                 ch = array_roaches.array[i].ch;
                 pos_x = WINDOW_SIZE/2;
                 pos_y = WINDOW_SIZE/2;
