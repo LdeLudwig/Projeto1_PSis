@@ -74,9 +74,10 @@ int find_ch_info(ch_info_t char_data[], int n_char, int ch){
 }
 
 
-void append_lizard(lizard_array_t *lizard_array, lizard_t new_lizard) {
+//LIZARD FUNCTIONS:
+void append_lizard(lizard_array_t *lizard_array, lizard_t *new_lizard) {
     if (lizard_array->size < MAX_LIZARDS) {
-        lizard_array->array[lizard_array->size] = new_lizard;
+        lizard_array->array[lizard_array->size] = *new_lizard;
         lizard_array->size++;
     } else {
         // Lidar com a condição de array cheio
@@ -84,6 +85,14 @@ void append_lizard(lizard_array_t *lizard_array, lizard_t new_lizard) {
     }
 }
 
+void update_lizard(lizard_array_t *lizard_array, lizard_t *new_lizard){
+    for(int i =0; i<lizard_array->size; i++){
+        if(lizard_array->array[i].ch == new_lizard->ch){
+            lizard_array->array[i] = *new_lizard;
+        }
+    }
+}
+//ROACH FUNCTIONS:
 void append_roach(cockroaches_array_t *roach_array, cockroaches_t *new_roach) {
     // Verifica se a barata já está no array
     /*for (int i = 0; i < roach_array->size; i++) {
@@ -109,6 +118,8 @@ void update_roach(cockroaches_array_t *roach_array, cockroaches_t *new_roach){
         }
     }
 }
+
+
 int main()
 {	 
     ch_info_t char_data[100];
@@ -150,10 +161,19 @@ int main()
         zmq_send(responder, "OK", 3, 0);
         
         if(species == LIZARD){
-            //zmq_send(responder, "OK", 3, 0);
             lizard_t new_lizard;
             zmq_recv(responder, &new_lizard, sizeof(new_lizard), 0);
-            append_lizard(&array_lizards, new_lizard);
+            
+            // Verifica se a lizard já está no array
+            int lizard_pos = find_ch_info(char_data, n_chars, new_lizard.ch);
+            if (lizard_pos == -1) {
+                append_lizard(&array_lizards, &new_lizard);
+            }
+            //printf("\nAGORA... msg type: %d\nEndereço de memoria: %p", new_lizard.msg_type, &new_lizard);
+            //for(int i=0;i < array_lizards.size;i++){
+            //    update_lizard(&array_lizards, &new_lizard);
+            //}
+
         }
         else{
             cockroaches_t new_roach;
@@ -174,7 +194,7 @@ int main()
 
         for(int i=0; i < array_lizards.size;i++){
             if(array_lizards.array[i].msg_type == LIZARD_CONNECT){
-                printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
+                //printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
                 ch = array_lizards.array[i].ch;
                 pos_x = WINDOW_SIZE/2;
                 pos_y = WINDOW_SIZE/2;
@@ -255,6 +275,8 @@ int main()
                 wrefresh(my_win);	
                 //zmq_send(responder, "OK", 3, 0);      
             }
+            zmq_send(responder, "OK", 3, 0);
+            zmq_recv(responder, &array_lizards.array[i], sizeof(array_lizards.array[i]), 0);
         }
     
         for(int i=0; i < array_roaches.size;i++){
