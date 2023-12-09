@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #define WINDOW_SIZE 15
 
 // STEP 1
