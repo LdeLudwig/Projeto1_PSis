@@ -58,7 +58,8 @@ int main()
         if (key == 'q' || key == 'Q') {
             m.msg_type = LIZARD_DISCONNECT;
             zmq_send(requester, &m, sizeof(m), 0);
-            zmq_recv(requester, answer, 3, 0);  
+            zmq_recv(requester, answer, 3, 0);
+            printf("\nGood bye...\n");  
             break; // Saia do loop quando 'q' for pressionado
         }		
         n++;

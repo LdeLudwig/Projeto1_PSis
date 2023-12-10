@@ -20,11 +20,18 @@ typedef struct ch_info_t
     int pos_x, pos_y;
 } ch_info_t;
 
-typedef struct {
-    lizard_t array[MAX_LIZARDS];
-    int size;
-} lizard_array_t;
+//Lizard structures:
+typedef struct LizardNode {
+    lizard_t lizard;
+    struct LizardNode* next;
+} LizardNode;
 
+typedef struct {
+    LizardNode* head;
+    int size;
+} LizardList;
+
+//Cockroach structures:
 typedef struct {
     cockroaches_t array[MAX_ROACHES];
     int size;
@@ -74,23 +81,61 @@ int find_ch_info(ch_info_t char_data[], int n_char, int ch){
 
 
 //LIZARD FUNCTIONS:
-void append_lizard(lizard_array_t *lizard_array, lizard_t *new_lizard) {
-    if (lizard_array->size < MAX_LIZARDS) {
-        lizard_array->array[lizard_array->size] = *new_lizard;
-        lizard_array->size++;
-    } else {
-        // Lidar com a condição de array cheio, temos de implementar novas coisas
-        printf("Erro: Array de lagartos cheio\n");
+
+void append_lizard2(LizardList* lizardList, lizard_t* new_lizard) {
+    if (lizardList->size < MAX_LIZARDS) {
+        LizardNode* newNode = (LizardNode*)malloc(sizeof(LizardNode));
+        if (newNode == NULL) {
+            perror("Erro ao alocar memória para o nó");
+            exit(EXIT_FAILURE);
+        }
+
+        newNode->lizard = *new_lizard;
+        newNode->next = NULL;
+
+        if (lizardList->head == NULL) {
+            lizardList->head = newNode;
+        } else {
+            LizardNode* current = lizardList->head;
+            while (current->next != NULL) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+
+        lizardList->size++;
+    }
+    else{
+        printf("Erro: max numero de lagartos atingido\n");
     }
 }
 
-void update_lizard(lizard_array_t *lizard_array, lizard_t *new_lizard){
-    for(int i =0; i<lizard_array->size; i++){
-        if(lizard_array->array[i].ch == new_lizard->ch){
-            lizard_array->array[i] = *new_lizard;
+// Função para liberar a memória alocada para a lista encadeada
+void freeLizardList(LizardList* lizardList) {
+    LizardNode* current = lizardList->head;
+    while (current != NULL) {
+        LizardNode* temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    lizardList->head = NULL;
+    lizardList->size = 0;
+}
+
+void update_lizard2(LizardList* lizardList, lizard_t* new_lizard) {
+    LizardNode* current = lizardList->head;
+
+    while (current != NULL) {
+        if (current->lizard.ch == new_lizard->ch) {
+            current->lizard = *new_lizard;
+            return;  // Se encontrou e atualizou, podemos sair da função
         }
+
+        current = current->next;
     }
 }
+
 //ROACH FUNCTIONS:
 void append_roach(cockroaches_array_t *roach_array, cockroaches_t *new_roach) {
     if (roach_array->size < MAX_ROACHES) {
@@ -122,7 +167,8 @@ int main()
     assert (rc == 0);
 
     cockroaches_array_t array_roaches = {.size = 0};
-    lizard_array_t array_lizards = {.size = 0};
+    LizardList lizardList = {.head = NULL, .size = 0};
+
 
     initscr();		    	
 	cbreak();				
@@ -158,7 +204,7 @@ int main()
             //Check if the lizard is in the array
             int lizard_pos = find_ch_info(char_data, n_chars, new_lizard.ch);
             if (lizard_pos == -1) {
-                append_lizard(&array_lizards, &new_lizard);
+                append_lizard2(&lizardList, &new_lizard);
             }
         }
         else{
@@ -178,10 +224,10 @@ int main()
             }
         }
 
-        for(int i=0; i < array_lizards.size;i++){
-            if(array_lizards.array[i].msg_type == LIZARD_CONNECT){
+        for (LizardNode* current = lizardList.head; current != NULL; current = current->next) {
+            if(current->lizard.msg_type == LIZARD_CONNECT){
                 //printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 0\n");
-                ch = array_lizards.array[i].ch;
+                ch = current->lizard.ch;
                 pos_x = WINDOW_SIZE/2;
                 pos_y = WINDOW_SIZE/2;
                 //STEP 3
@@ -190,9 +236,9 @@ int main()
                 char_data[n_chars].pos_y = pos_y;
                 n_chars++;
             }
-            if(array_lizards.array[i].msg_type == LIZARD_MOVEMENT){
+            if(current->lizard.msg_type == LIZARD_MOVEMENT){
                 //printf("ENTREI ENTREI ENTREI!\nLIZARD MSG TYPE 1\n%d", species);
-                int ch_pos = find_ch_info(char_data, n_chars, array_lizards.array[i].ch);
+                int ch_pos = find_ch_info(char_data, n_chars, current->lizard.ch);
                 if(ch_pos != -1){
                     pos_x = char_data[ch_pos].pos_x;
                     pos_y = char_data[ch_pos].pos_y;
@@ -226,7 +272,7 @@ int main()
                     }
 
                     // calculates new direction 
-                    direction = array_lizards.array[i].direction;
+                    direction = current->lizard.direction;
 
                     // calculates new mark position 
                     new_position(&pos_x, &pos_y, direction);
@@ -261,12 +307,11 @@ int main()
                 wrefresh(my_win);	
                 //zmq_send(responder, "OK", 3, 0);      
             }
-            if(array_lizards.array[i].msg_type == LIZARD_DISCONNECT){
+            if(current->lizard.msg_type == LIZARD_DISCONNECT){
                 zmq_send(responder, "OK", 3, 0);
-                //Tem de dar um jeito de limpar isso aq
             }
             zmq_send(responder, "OK", 3, 0);
-            zmq_recv(responder, &array_lizards.array[i], sizeof(array_lizards.array[i]), 0);
+            zmq_recv(responder, &current->lizard, sizeof(current->lizard), 0);
         }
     
         for(int i=0; i < array_roaches.size;i++){
