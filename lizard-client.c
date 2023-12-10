@@ -28,11 +28,6 @@ int main()
     }while(!isalpha(ch));
     
 
-    lizard_t lizard;
-    lizard.msg_type = LIZARD_CONNECT;
-    lizard.ch = ch;
-    strcpy(lizard.tail, ".....");
-
     lizard_t m;
     m.msg_type = LIZARD_CONNECT;
     m.ch = ch;
@@ -54,7 +49,7 @@ int main()
     zmq_recv(requester, answer, 50, 0);
     //TODO_9
     // prepare the movement message
-    lizard.msg_type = LIZARD_MOVEMENT;
+    m.msg_type = LIZARD_MOVEMENT;
     
     int key;
     do
@@ -73,25 +68,25 @@ int main()
             mvprintw(0,0,"%d Left arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-           lizard.direction = LEFT;
+           m.direction = LEFT;
             break;
         case KEY_RIGHT:
             mvprintw(0,0,"%d Right arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-            lizard.direction = RIGHT;
+            m.direction = RIGHT;
             break;
         case KEY_DOWN:
             mvprintw(0,0,"%d Down arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-           lizard.direction = DOWN;
+           m.direction = DOWN;
             break;
         case KEY_UP:
             mvprintw(0,0,"%d :Up arrow is pressed", n);
             //TODO_9
             // prepare the movement message
-            lizard.direction = UP;
+            m.direction = UP;
             break;
 
         default:
@@ -102,7 +97,7 @@ int main()
         //TODO_10
         //send the movement message
         if (key != 'x'){
-            zmq_send(requester, &lizard, sizeof(lizard_t), 0);
+            zmq_send(requester, &m, sizeof(lizard_t), 0);
             zmq_recv(requester, answer, 3, 0);  
         }
         refresh();			/* Print it on to the real screen */
